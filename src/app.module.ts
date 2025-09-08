@@ -12,19 +12,20 @@ import { AppService } from './app.service';
 
 @Module({
   imports: [UsersModule, FloorsModule, PaymentsModule, ReportsModule , 
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: envs.dbHost,
-      port: envs.port,
-      username: envs.dbUser,
-      password: envs.dbPassword,
-      database: envs.dbName,
-      // entities: [User , Review],
-      autoLoadEntities: true,
-      entities: ['dist/**/*.entity{.ts,.js}'],
-      migrations: ['dist/migration/*.js'],
-      synchronize: true,
-    }),
+  //   TypeOrmModule.forRoot({
+  //     type: 'postgres',
+  //     host: envs.dbHost,
+  //     port: envs.port,
+  //     username: envs.dbUser,
+  //     password: envs.dbPassword,
+  //     database: envs.dbName,
+  //     // entities: [User , Review],
+  //     autoLoadEntities: true,
+  //     entities: ['dist/**/*.entity{.ts,.js}'],
+  //     migrations: ['dist/migration/*.js'],
+  //     synchronize: true,
+  //   }),
+  // 
   ],
 
     providers: [
