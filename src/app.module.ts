@@ -6,7 +6,8 @@ import { ReportsModule } from './reports/reports.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { envs } from './config';
 import { AppController } from './app.controller';
-import { AppService } from './app/app.service';
+import { AppService } from './app.service';
+
 
 
 @Module({
