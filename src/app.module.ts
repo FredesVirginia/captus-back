@@ -5,6 +5,8 @@ import { PaymentsModule } from './payments/payments.module';
 import { ReportsModule } from './reports/reports.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { envs } from './config';
+import { AppController } from './app.controller';
+import { AppService } from './app/app.service';
 
 
 @Module({
@@ -41,7 +43,12 @@ import { envs } from './config';
         }, 1000);
       },
     },
+   
+
+    AppService,
   ],
+
+    controllers: [AppController],
    
  
 })
