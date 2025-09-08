@@ -32,19 +32,19 @@ import { AppService } from './app.service';
    
 
     // Servicio adicional para verificar la conexión
-    {
-      provide: 'DATABASE_CONNECTION_LOGGER',
-      useFactory: async () => {
-        const logger = new Logger('Database');
+    // {
+    //   provide: 'DATABASE_CONNECTION_LOGGER',
+    //   useFactory: async () => {
+    //     const logger = new Logger('Database');
 
-        setTimeout(() => {
-          logger.log(
-            `🗄️  Conectado a PostgreSQL en: ${envs.dbHost}:${envs.port}/${envs.dbName}`,
-          );
-          logger.debug('✅ ¡Conexión exitosa!');
-        }, 1000);
-      },
-    },
+    //     setTimeout(() => {
+    //       logger.log(
+    //         `🗄️  Conectado a PostgreSQL en: ${envs.dbHost}:${envs.port}/${envs.dbName}`,
+    //       );
+    //       logger.debug('✅ ¡Conexión exitosa!');
+    //     }, 1000);
+    //   },
+    // },
    
 
     AppService,
