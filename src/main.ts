@@ -11,7 +11,7 @@ async function bootstrap() {
       transformOptions: {
         enableImplicitConversion: true, // <- esto ayuda con las conversiones
       },
-      whitelist: false,
+      whitelist: true,
       forbidNonWhitelisted: false,
     }),
   );

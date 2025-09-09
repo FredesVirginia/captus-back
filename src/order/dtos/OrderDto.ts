@@ -2,10 +2,12 @@ import { Type } from 'class-transformer';
 import { IsArray, IsNotEmpty, IsNumber, ValidateNested } from 'class-validator';
 
 
-class OrderItemDto {
+export class OrderItemDto {
+  @Type(() => Number)
   @IsNumber()
   plantId: number;
 
+  @Type(() => Number)
   @IsNumber()
   quantity: number;
 }

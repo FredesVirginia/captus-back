@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { envs } from './config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { OrderModule } from './order/order.module';
 
 
 
@@ -24,7 +25,7 @@ import { AppService } from './app.service';
       entities: ['dist/**/*.entity{.ts,.js}'],
       migrations: ['dist/migration/*.js'],
       synchronize: true,
-    }),
+    }), OrderModule,
   
   ],
 
