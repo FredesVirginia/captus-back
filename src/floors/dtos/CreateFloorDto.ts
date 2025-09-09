@@ -16,8 +16,7 @@ export class CreateFloorDto {
   @IsNumber()
   stock: number;
 
-  @IsUrl()
-  imagenUrl: string;
+  
 }
 
 export class UpdateFloorDto extends CreateFloorDto {}

@@ -1,4 +1,17 @@
-import { Controller } from '@nestjs/common';
+import { Body, Controller, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { FloorsService } from './floors.service';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { CreateFloorDto } from './dtos/CreateFloorDto';
 
 @Controller('floors')
-export class FloorsController {}
+export class FloorsController {
+    constructor(private readonly floorsService: FloorsService) {}
+
+  @Post('upload-image')
+  @UseInterceptors(FileInterceptor('image'))
+  async uploadImage(@UploadedFile() file: Express.Multer.File ,  @Body() dto : CreateFloorDto) {
+    
+    const uploaded = await this.floorsService.uploadImage(file , dto);
+    return uploaded; 
+  }
+}

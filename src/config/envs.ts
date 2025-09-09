@@ -9,6 +9,7 @@ interface EnvVars{
     DB_USER:string;
     DB_PASSWORD:string;
     DB_NAME:string;
+    BLOB_READ_WRITE_TOKEN:string;
    
 }
 
@@ -20,6 +21,7 @@ const envsShema = joi.object({
     DB_USER:joi.string().required(),
     DB_PASSWORD:joi.string().required(),
     DB_NAME:joi.string().required(),
+    BLOB_READ_WRITE_TOKEN:joi.string().required()
    
 }).unknown(true);
 
@@ -39,6 +41,7 @@ export const envs = {
     dbHost: envVars.DB_HOST,
     dbName : envVars.DB_NAME,
     dbPassword: envVars.DB_PASSWORD,
-    dbUser: envVars.DB_USER
+    dbUser: envVars.DB_USER,
+    blodReadWrite : envVars.BLOB_READ_WRITE_TOKEN
    
 }
