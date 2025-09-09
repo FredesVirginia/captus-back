@@ -5,6 +5,7 @@ import {
   ManyToMany,
   PrimaryGeneratedColumn
 } from 'typeorm';
+import { FloorEnum } from '../enums/FloorEnum';
 
 
 @Entity()
@@ -18,8 +19,8 @@ export class Floor {
   @Column({ type: 'text' })
   descripcion: string;
 
-  @Column({ type: 'enum', enum: ['cactus', 'suculenta'] })
-  categoria: 'cactus' | 'suculenta';
+  @Column({ type: 'enum', enum: FloorEnum , default : FloorEnum.CAPTU })
+  categoria:  FloorEnum
 
   @Column('decimal', { precision: 10, scale: 2 })
   precio: number;

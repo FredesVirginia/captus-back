@@ -27,6 +27,6 @@ export class FloorsService {
     })
 
     // Aquí puedes retornar el URL para confirmar subida o guardarlo en DB
-    return { url: blob.url };
+    return { data:saved };
   }
 }

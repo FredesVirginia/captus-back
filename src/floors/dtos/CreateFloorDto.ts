@@ -1,4 +1,6 @@
 import { IsNotEmpty, IsNumber, IsEnum, IsUrl } from 'class-validator';
+import { FloorEnum } from '../enums/FloorEnum';
+import { Transform } from 'class-transformer';
 
 export class CreateFloorDto {
   @IsNotEmpty()
@@ -7,8 +9,12 @@ export class CreateFloorDto {
   @IsNotEmpty()
   descripcion: string;
 
-  @IsEnum(['cactus', 'suculenta'])
-  categoria: 'cactus' | 'suculenta';
+  @Transform(({ value }) => {
+    console.log('Categoria recibida:', value, 'tipo:', typeof value);
+    return value;
+  })
+  @IsEnum(FloorEnum)
+  categoria: FloorEnum
 
   @IsNumber()
   precio: number;
