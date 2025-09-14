@@ -8,9 +8,10 @@ import { UsersModule } from 'src/users/users.module';
 import { FloorsModule } from 'src/floors/floors.module';
 import { User } from 'src/users/entity/user.entity';
 import { Floor } from 'src/floors/entity/floor.entity';
+import { PrintModule } from 'src/print/print.module';
 
 @Module({
-    imports : [TypeOrmModule.forFeature([Orden , OrdenItem , User , Floor ]) , UsersModule , FloorsModule], 
+    imports : [TypeOrmModule.forFeature([Orden , OrdenItem , User , Floor ]) , UsersModule , FloorsModule , PrintModule], 
   controllers: [OrderController],
   providers: [OrderService]
 })

@@ -8,6 +8,7 @@ import { envs } from './config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { OrderModule } from './order/order.module';
+import { PrintModule } from './print/print.module';
 
 
 
@@ -25,7 +26,7 @@ import { OrderModule } from './order/order.module';
       entities: ['dist/**/*.entity{.ts,.js}'],
       migrations: ['dist/migration/*.js'],
       synchronize: true,
-    }), OrderModule,
+    }), OrderModule, PrintModule,
   
   ],
 

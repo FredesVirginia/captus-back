@@ -7,6 +7,8 @@ import { User } from 'src/users/entity/user.entity';
 import { Floor } from 'src/floors/entity/floor.entity';
 import { CreateOrdenDto, OrderItemDto } from './dtos/OrderDto';
 import { PagoEnum } from './enums/PagosEnum';
+import { PrintService } from 'src/print/print.service';
+import { buildOrderTemplate } from 'src/print/templates/ordenTemplate';
 @Injectable()
 export class OrderService {
 
@@ -15,6 +17,7 @@ export class OrderService {
     @InjectRepository(OrdenItem) private readonly orderItemRepo: Repository<OrdenItem>,
     @InjectRepository(User) private readonly userRepo: Repository<User>,
     @InjectRepository(Floor) private readonly plantRepo: Repository<Floor>,
+     private readonly printService: PrintService,
   ) {}
 
 
@@ -61,6 +64,17 @@ export class OrderService {
     // 5️⃣ Actualizar total en la orden
     order.total = total;
     return await this.orderRepo.save(order);
+  }
+
+  async printOrder(orderId: number): Promise<Buffer> {
+    const order = await this.orderRepo.findOne({
+      where: { id: orderId },
+      relations: ['user', 'items', 'items.planta'],
+    });
+    if (!order) throw new NotFoundException('Orden no encontrada');
+
+    const docDef = await buildOrderTemplate(order);
+    return this.printService.generatePdf(docDef);
   }
 
 }
