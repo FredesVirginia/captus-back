@@ -5,10 +5,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Orden } from './entity/order.entity';
 import { OrdenItem } from './entity/orderitem.entity';
 import { Pago } from './entity/pago.entity';
+import { ConfigModule } from '@nestjs/config';
+import { OrderModule } from 'src/order/order.module';
+import { MailModule } from 'src/mailer/mailer.module';
 
 @Module({
-
+imports: [ConfigModule , PaymentsModule , OrderModule , TypeOrmModule.forFeature([Pago, Orden]), MailModule ],
   providers: [PaymentsService],
-  controllers: [PaymentsController]
+  controllers: [PaymentsController],
+  exports : [PaymentsService]
 })
 export class PaymentsModule {}

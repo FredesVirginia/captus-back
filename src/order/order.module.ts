@@ -9,10 +9,18 @@ import { FloorsModule } from 'src/floors/floors.module';
 import { User } from 'src/users/entity/user.entity';
 import { Floor } from 'src/floors/entity/floor.entity';
 import { PrintModule } from 'src/print/print.module';
+import { PaymentsModule } from 'src/payments/payments.module';
 
 @Module({
-    imports : [TypeOrmModule.forFeature([Orden , OrdenItem , User , Floor ]) , UsersModule , FloorsModule , PrintModule], 
+  imports: [
+    TypeOrmModule.forFeature([Orden, OrdenItem, User, Floor]),
+    UsersModule,
+    FloorsModule,
+    PrintModule,
+   
+  ],
   controllers: [OrderController],
-  providers: [OrderService]
+  providers: [OrderService],
+  exports: [OrderService],
 })
 export class OrderModule {}

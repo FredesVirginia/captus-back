@@ -9,6 +9,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { OrderModule } from './order/order.module';
 import { PrintModule } from './print/print.module';
+import { ConfigModule } from '@nestjs/config';
+import { MailModule } from './mailer/mailer.module';
 
 
 
@@ -27,6 +29,11 @@ import { PrintModule } from './print/print.module';
       migrations: ['dist/migration/*.js'],
       synchronize: true,
     }), OrderModule, PrintModule,
+     ConfigModule.forRoot({
+      isGlobal: true, // 👈 hace que esté disponible en toda la app sin volver a importarlo
+      envFilePath: '.env', // 👈 asegúrate de que apunta al archivo correcto
+    }),
+     MailModule,
   
   ],
 
