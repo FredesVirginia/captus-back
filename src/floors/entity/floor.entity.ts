@@ -3,9 +3,14 @@ import {
   Column,
   Entity,
   ManyToMany,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn
 } from 'typeorm';
 import { FloorEnum } from '../enums/FloorEnum';
+import { Oferta } from './oferta.entity';
+import { ComboItem } from './comboItem.entity';
 
 
 @Entity()
@@ -33,6 +38,12 @@ export class Floor {
 
   @ManyToMany(() => User, (user) => user.favoritos)
   favoritedBy: User[];
+
+    @ManyToOne(() => Oferta, (oferta) => oferta.plantas, { nullable: true })
+  oferta?: Oferta;
+
+  @OneToMany(() => ComboItem, (comboItem) => comboItem.planta)
+comboItems: ComboItem[];
 
 
 }
