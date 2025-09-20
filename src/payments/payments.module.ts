@@ -8,9 +8,10 @@ import { Pago } from './entity/pago.entity';
 import { ConfigModule } from '@nestjs/config';
 import { OrderModule } from 'src/order/order.module';
 import { MailModule } from 'src/mailer/mailer.module';
+import { Floor } from 'src/floors/entity/floor.entity';
 
 @Module({
-imports: [ConfigModule , PaymentsModule , OrderModule , TypeOrmModule.forFeature([Pago, Orden]), MailModule ],
+imports: [ConfigModule , PaymentsModule , OrderModule , TypeOrmModule.forFeature([Pago, Orden , Floor]), MailModule ],
   providers: [PaymentsService],
   controllers: [PaymentsController],
   exports : [PaymentsService]

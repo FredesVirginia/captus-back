@@ -28,15 +28,16 @@ export class PaymentsController {
 
     const pdfBuffer = await this.orderService.printOrder(orden.id);
 
-    await this.mailerService.sendOrderMail(
-      'William-Champion@outlook.com', // el correo del dueño
-      orden.id,
-      pdfBuffer,
-    );
-   // const payment = await this.paymentsService.createPayment(orden);
-
+    // await this.mailerService.sendOrderMail(
+    //   'William-Champion@outlook.com', // el correo del dueño
+    //   orden.id,
+    //   pdfBuffer,
+    // );
+    const payment = await this.paymentsService.createPayment(orden);
+ 
     return {
       order: orden,
+      pago : payment
      
     };
   }

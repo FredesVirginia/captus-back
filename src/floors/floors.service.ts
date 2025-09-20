@@ -8,12 +8,14 @@ import { Repository } from 'typeorm';
 import { CreateFloorDto } from './dtos/CreateFloorDto';
 @Injectable()
 export class FloorsService {
-
-    constructor(
-        @InjectRepository(Floor)
-        private floorRepository: Repository<Floor>
-    ){}
-  async uploadImage(@UploadedFile() file: Express.Multer.File , createdFloorDto : CreateFloorDto) {
+  constructor(
+    @InjectRepository(Floor)
+    private floorRepository: Repository<Floor>,
+  ) {}
+  async uploadImage(
+    @UploadedFile() file: Express.Multer.File,
+    createdFloorDto: CreateFloorDto,
+  ) {
     const blob = await put(file.originalname, file.buffer, {
       access: 'public',
       token: process.env.BLOB_READ_WRITE_TOKEN,
@@ -21,12 +23,19 @@ export class FloorsService {
     });
 
     const saved = await this.floorRepository.save({
-        ...createdFloorDto,
-        imagenUrl :blob.url,
-        
-    })
+      ...createdFloorDto,
+      imagenUrl: blob.url,
+    });
 
     // Aquí puedes retornar el URL para confirmar subida o guardarlo en DB
-    return { data:saved };
+    return { data: saved };
+  }
+
+  async getAllFloors(){
+    const allFloor = await this.floorRepository.find()
+    if(allFloor.length > 0){
+      return allFloor
+    }
+    return []
   }
 }

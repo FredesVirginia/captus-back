@@ -7,6 +7,7 @@ import vexor from 'vexor';
 import { Orden } from './entity/order.entity';
 import { Pago } from './entity/pago.entity';
 import { EstadoPagoEnum, MedioPagoEnum, PagoEnum } from './enums/PagosEnum';
+import { Floor } from 'src/floors/entity/floor.entity';
 
 @Injectable()
 export class PaymentsService {
@@ -17,6 +18,7 @@ export class PaymentsService {
     private readonly configService: ConfigService,
     @InjectRepository(Pago) private readonly pagoRepo: Repository<Pago>,
     @InjectRepository(Orden) private readonly orderRepo: Repository<Orden>,
+    @InjectRepository(Floor) private readonly floorRepo: Repository<Floor>,
   ) {
     try {
       this.logger.log('Inicializando Vexor client...');
@@ -84,9 +86,8 @@ export class PaymentsService {
   async handleWebhook(data: any) {
     this.logger.log('Webhook recibido', data);
 
-    const { orderId, status, paymentId, amount, method } = data; // dependé de cómo Vexor te mande los datos
-    
-   
+    const { orderId, status, paymentId, amount, method } = data;
+
     const pago = await this.pagoRepo.findOne({
       where: { orden: { id: orderId } },
       relations: ['orden'],
@@ -119,6 +120,19 @@ export class PaymentsService {
       if (orden) {
         orden.estado = PagoEnum.PAGADO;
         await this.orderRepo.save(orden);
+        console.log('LA ORDE ES ', orden);
+        const floors = orden.items;
+        for (const floor of floors) {
+          const floorFound = await this.floorRepo.findOne({
+            where: { id: floor.id },
+          });
+          if (floorFound) {
+            const newStock = floorFound.stock - floor.cantidad;
+            floorFound.stock = newStock;
+            await this.floorRepo.save(floorFound);
+            console.log('Se encontro la Planta', floorFound);
+          }
+        }
       }
     }
 
