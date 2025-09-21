@@ -9,6 +9,7 @@ import {
   PrimaryGeneratedColumn
 } from 'typeorm';
 import { UserEnum } from '../enums/user.enum';
+import { Favorito } from './favoritos.entity';
 
 
 @Entity()
@@ -37,13 +38,11 @@ export class User {
   @OneToMany(() => Orden, (orden) => orden.user)
   ordenes: Orden[];
 
-  @ManyToMany(() => Floor, (planta) => planta.favoritedBy)
-  @JoinTable({
-    name: 'favoritos',
-    joinColumn: { name: 'userId' },
-    inverseJoinColumn: { name: 'plantaId' },
-  })
-  favoritos: Floor[];
+   @OneToMany(() => Favorito, (favorito) => favorito.user)
+  favoritos: Favorito[];
+
+
+
 
  
 }

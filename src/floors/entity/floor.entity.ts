@@ -6,12 +6,12 @@ import {
   ManyToOne,
   OneToMany,
   OneToOne,
-  PrimaryGeneratedColumn
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { FloorEnum } from '../enums/FloorEnum';
 import { Oferta } from './oferta.entity';
 import { ComboItem } from './comboItem.entity';
-
+import { Favorito } from 'src/users/entity/favoritos.entity';
 
 @Entity()
 export class Floor {
@@ -24,8 +24,8 @@ export class Floor {
   @Column({ type: 'text' })
   descripcion: string;
 
-  @Column({ type: 'enum', enum: FloorEnum , default : FloorEnum.CAPTU })
-  categoria:  FloorEnum
+  @Column({ type: 'enum', enum: FloorEnum, default: FloorEnum.CAPTU })
+  categoria: FloorEnum;
 
   @Column('decimal', { precision: 10, scale: 2 })
   precio: number;
@@ -36,14 +36,12 @@ export class Floor {
   @Column()
   imagenUrl: string;
 
-  @ManyToMany(() => User, (user) => user.favoritos)
-  favoritedBy: User[];
-
-    @ManyToOne(() => Oferta, (oferta) => oferta.plantas, { nullable: true })
+  @ManyToOne(() => Oferta, (oferta) => oferta.plantas, { nullable: true })
   oferta?: Oferta;
 
   @OneToMany(() => ComboItem, (comboItem) => comboItem.planta)
-comboItems: ComboItem[];
+  comboItems: ComboItem[];
 
-
+  @OneToMany(() => Favorito, (favorito) => favorito.floor)
+  favoritos: Favorito[];
 }

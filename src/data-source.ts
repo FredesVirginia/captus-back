@@ -10,6 +10,7 @@ import { OrdenItem } from './payments/entity/orderitem.entity';
 import { Oferta } from './floors/entity/oferta.entity';
 import { Combo } from './floors/entity/combo.entity';
 import { ComboItem } from './floors/entity/comboItem.entity';
+import { Favorito } from './users/entity/favoritos.entity';
 
 
 
@@ -21,7 +22,7 @@ export const AppDataSource = new DataSource({
   username: process.env.DB_USER!,
   password: process.env.DB_PASSWORD!,
   database: process.env.DB_NAME!,
-  entities: [User , Floor ,Pago , Orden , OrdenItem , Oferta , Combo , ComboItem],
+  entities: [User , Floor ,Pago , Orden , OrdenItem , Oferta , Combo , ComboItem , Favorito],
   migrations: ['src/migration/*.ts'],
   synchronize: false,
 });
