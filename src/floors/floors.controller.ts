@@ -20,7 +20,6 @@ export class FloorsController {
     @UploadedFile() file: Express.Multer.File,
     @Body() dto: CreateFloorDto,
   ) {
-    console.log('DATA', dto);
     const uploaded = await this.floorsService.uploadImage(file, dto);
     return uploaded;
   }

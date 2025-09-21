@@ -7,13 +7,13 @@ export class Combo {
   id: number;
 
   @Column('varchar', { length: 100 })
-  nombre: string; // Ej: "Combo Suculentas", "Pack de 3 Cactus"
+  nombre: string;
 
   @Column('text', { nullable: true })
   descripcion: string;
 
   @Column('decimal', { precision: 10, scale: 2 })
-  precio: number; // 👈 puede ser fijo o calculado
+  precio: number; 
 
   @Column({ default: true })
   activo: boolean;
