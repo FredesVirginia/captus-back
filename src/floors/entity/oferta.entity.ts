@@ -6,6 +6,9 @@ export class Oferta {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column()
+  nombre : string
+
   @OneToMany(() => Floor, (planta) => planta.oferta)
   plantas: Floor[];
 
