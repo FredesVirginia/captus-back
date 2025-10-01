@@ -87,7 +87,7 @@ export class FloorsService {
 
   async createOfertaFloor(oferta: CreateOfertaDto) {
     try {
-      console.log("LA DATA QUE LLEGA", oferta);
+      
       const plantas = await this.floorRepository.findBy({
         id: In(oferta.plantasIds),
       });

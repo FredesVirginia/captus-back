@@ -11,6 +11,7 @@ import { OrderModule } from './order/order.module';
 import { PrintModule } from './print/print.module';
 import { ConfigModule } from '@nestjs/config';
 import { MailModule } from './mailer/mailer.module';
+import { AuthModule } from './auth/auth.module';
 
 
 
@@ -34,6 +35,7 @@ import { MailModule } from './mailer/mailer.module';
       envFilePath: '.env', // 👈 asegúrate de que apunta al archivo correcto
     }),
      MailModule,
+     AuthModule,
   
   ],
 

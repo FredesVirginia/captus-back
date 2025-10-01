@@ -4,6 +4,7 @@ import {
   Get,
   Post,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FloorsService } from './floors.service';
@@ -11,11 +12,17 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateFloorDto } from './dtos/CreateFloorDto';
 import { CreateOfertaDto } from './dtos/OfertaDto';
 import { CreateComboDto } from './dtos/ComboDto';
+import { Roles } from 'src/auth/roles.decorator';
+import { JwtAuthGuard } from 'src/auth/jwt.guard';
+import { RolesGuard } from 'src/auth/roles.guard';
 
 @Controller('floors')
 export class FloorsController {
   constructor(private readonly floorsService: FloorsService) {}
 
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
   @Post('upload-image')
   @UseInterceptors(FileInterceptor('image'))
   async uploadImage(

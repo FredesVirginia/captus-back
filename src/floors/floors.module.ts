@@ -6,9 +6,10 @@ import { Floor } from './entity/floor.entity';
 import { Oferta } from './entity/oferta.entity';
 import { Combo } from './entity/combo.entity';
 import { ComboItem } from './entity/comboItem.entity';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Floor , Oferta , Combo , ComboItem])],
+  imports: [TypeOrmModule.forFeature([Floor , Oferta , Combo , ComboItem]) ,  AuthModule,],
   controllers: [FloorsController],
   providers: [FloorsService]
 })
