@@ -1,8 +1,7 @@
 import { IsNumber, Min } from 'class-validator';
 
 export class CreateComboItemDto {
-  @IsNumber()
-  comboId: number;
+  
 
   @IsNumber()
   plantaId: number;

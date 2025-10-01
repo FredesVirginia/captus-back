@@ -10,6 +10,7 @@ export class MailService {
 
   async sendOrderMail(to: string, orderId: number, pdfBuffer: Buffer) {
     try {
+      console.log('hola');
       await this.mailerService.sendMail({
         to,
         subject: `Nueva orden recibida - #${orderId}`,
