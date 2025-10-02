@@ -12,7 +12,7 @@ import { RolesGuard } from './roles.guard';
 @Module({
    imports: [
     TypeOrmModule.forFeature([User]),
-     PassportModule.register({ defaultStrategy: 'jwt' }),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secret: 'super-secret-jwt',
       signOptions: { expiresIn: '1d' },
@@ -20,6 +20,6 @@ import { RolesGuard } from './roles.guard';
   ],
   controllers: [AuthController],
   providers: [AuthService , JwtStrategy , JwtAuthGuard, RolesGuard],
-   exports: [PassportModule, JwtModule,],
+  exports: [PassportModule, JwtModule,],
 })
 export class AuthModule {}

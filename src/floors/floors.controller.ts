@@ -20,7 +20,6 @@ import { RolesGuard } from 'src/auth/roles.guard';
 export class FloorsController {
   constructor(private readonly floorsService: FloorsService) {}
 
-
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN')
   @Post('upload-image')
@@ -33,30 +32,32 @@ export class FloorsController {
     return uploaded;
   }
 
-  @Post("/create-oferta")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  @Post('/create-oferta')
   async createOferta(@Body() dto: CreateOfertaDto) {
     return await this.floorsService.createOfertaFloor(dto);
   }
 
-  @Post("/create-combo")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  @Post('/create-combo')
   async createCombo(@Body() dto: CreateComboDto) {
     return await this.floorsService.createCombo(dto);
   }
-
-
 
   @Get()
   async getFloors() {
     return await this.floorsService.getAllFloors();
   }
 
-  @Get("/ofertas")
-  async getOfertas (){
+  @Get('/ofertas')
+  async getOfertas() {
     return await this.floorsService.getAllOfertas();
   }
 
-  @Get("/combos")
-  async getCombos(){
-    return await this.floorsService.getAllCombos()
+  @Get('/combos')
+  async getCombos() {
+    return await this.floorsService.getAllCombos();
   }
 }

@@ -8,11 +8,7 @@ export class UserController {
     constructor (private readonly userService : UserService){}
 
    
-    @Post('create-user')
-    async createUser(@Body() userTodoListDto : CreateUserDto){
-        const newTodoList = await this.userService.createUser(userTodoListDto)
-        return newTodoList
-    }
+    
 
  
     @Get('get-all-user')

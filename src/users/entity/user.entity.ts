@@ -20,8 +20,8 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  @Column({default : 0})
-  phone:number
+  @Column()
+  phone:string
 
   @Column()
   nombre: string;

@@ -17,22 +17,7 @@ export class UserService {
     private userRepository: Repository<User>,
   ) {}
 
-  async createUser(userDto: CreateUserDto) {
-    try {
-      const userNew = await this.userRepository.save(userDto);
-      return userNew;
-    } catch (error) {
-      console.log('EEROR FUE ', error);
-
-      if (error.name === 'QueryFailedError') {
-        throw new BadRequestException(
-          'Datos inválidos o violación de restricciones',
-        );
-      }
-
-      throw new InternalServerErrorException('Error interno del servidor');
-    }
-  }
+  
 
   async getAllUser() {
     try {
