@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import PdfPrinter from 'pdfmake';
 import { TDocumentDefinitions } from 'pdfmake/interfaces';
 import * as fs from 'fs';
@@ -19,17 +19,31 @@ export class PrintService {
     this.printer = new PdfPrinter(fonts);
   }
 
- async generatePdf(docDefinition: TDocumentDefinitions): Promise<Buffer> {
-  return new Promise((resolve, reject) => {
-    const pdfDoc = this.printer.createPdfKitDocument(docDefinition);
-    const chunks: Buffer[] = [];
+async generatePdf(docDefinition: TDocumentDefinitions): Promise<Buffer> {
+  try {
+    return await new Promise<Buffer>((resolve, reject) => {
+      const pdfDoc = this.printer.createPdfKitDocument(docDefinition);
+      const chunks: Buffer[] = [];
 
-    pdfDoc.on('data', (chunk) => chunks.push(chunk));
-    pdfDoc.on('end', () => resolve(Buffer.concat(chunks)));
-    pdfDoc.on('error', (err) => reject(err));
+      pdfDoc.on('data', (chunk) => chunks.push(chunk));
+      pdfDoc.on('end', () => resolve(Buffer.concat(chunks)));
+      pdfDoc.on('error', (err) => reject(err));
 
-    pdfDoc.end();
-  });
+      pdfDoc.end();
+    });
+  } catch (error) {
+    console.error('❌ Error generando PDF:', error);
+
+    throw new HttpException(
+      {
+        code: 'PDF_GENERATION_FAILED',
+        message: 'Ocurrió un error generando el PDF',
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+      },
+      HttpStatus.INTERNAL_SERVER_ERROR,
+    );
+  }
 }
+
 
 }

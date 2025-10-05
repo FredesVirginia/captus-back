@@ -22,7 +22,6 @@ export class AuthService {
 
   async register(dto: AuthDto) {
     try {
-      // Verificamos si el usuario ya existe
       const existing = await this.userRepo.findOne({
         where: { email: dto.email },
       });
@@ -47,28 +46,50 @@ export class AuthService {
         { code: 'REGISTER_ERROR', status: HttpStatus.INTERNAL_SERVER_ERROR },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
-
     }
   }
 
   async login(dto: LoginAuthDto) {
-    const user = await this.userRepo.findOneBy({ email: dto.email });
+    try {
+      const user = await this.userRepo.findOneBy({ email: dto.email });
 
-    if (!user || !(await bcrypt.compare(dto.password, user.password))) {
-      throw new UnauthorizedException('Credenciales incorrectas');
+      if (!user) {
+        throw new HttpException(
+          { code: 'USER_NOT_FOUND', status: HttpStatus.NOT_FOUND },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      if (!user || !(await bcrypt.compare(dto.password, user.password))) {
+        throw new HttpException(
+          { code: 'UNAUTHORIZED_USER', status: HttpStatus.UNAUTHORIZED },
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
+
+      const token = await this.signToken(user!);
+
+      return {
+        access_token: token,
+        user: {
+          id: user!.id,
+          name: user!.nombre,
+          email: user!.email,
+          role: user!.role,
+        },
+      };
+    } catch (error) {
+      console.error('❌ Error in login():', error);
+      if (error instanceof HttpException) throw error;
+
+      throw new HttpException(
+        {
+          code: 'LOGIN_ERROR',
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
-
-    const token = await this.signToken(user!); // 👈 Ahora token es string
-
-    return {
-      access_token: token, // 👈 ¡Ahora sí correcto!
-      user: {
-        id: user!.id,
-        name: user!.nombre,
-        email: user!.email,
-        role: user!.role,
-      },
-    };
   }
 
   async validateToken(token: string) {
@@ -82,6 +103,6 @@ export class AuthService {
 
   private async signToken(user: User) {
     const payload = { sub: user.id, email: user.email, role: user.role };
-    return this.jwt.signAsync(payload); // 👈 Ya no lo envuelvas en { access_token }
+    return this.jwt.signAsync(payload); 
   }
 }

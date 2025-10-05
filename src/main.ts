@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { AllExceptionsFilter } from './utils/exeptionFilter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -9,12 +10,15 @@ async function bootstrap() {
     new ValidationPipe({
       transform: true,
       transformOptions: {
-        enableImplicitConversion: true, // <- esto ayuda con las conversiones
+        enableImplicitConversion: true, 
       },
       whitelist: true,
       forbidNonWhitelisted: false,
     }),
   );
+
+  // Usa tu filtro global para capturar todos los errores
+  app.useGlobalFilters(new AllExceptionsFilter());
 
   app.enableCors();
   await app.listen(process.env.PORT ?? 4000);

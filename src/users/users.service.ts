@@ -1,5 +1,7 @@
 import {
     BadRequestException,
+    HttpException,
+    HttpStatus,
     Injectable,
     InternalServerErrorException
 } from '@nestjs/common';
@@ -19,14 +21,24 @@ export class UserService {
 
   
 
-  async getAllUser() {
-    try {
-      const allUser = await this.userRepository.find();
-      return allUser;
-    } catch (error) {
-      console.log("Error" , error)
-    }
+async getAllUser() {
+  try {
+    const allUser = await this.userRepository.find();
+    return allUser;
+  } catch (error) {
+    console.error('❌ Error en getAllUser():', error);
+
+    throw new HttpException(
+      {
+        code: 'GET_USERS_ERROR',
+        message: 'Ocurrió un error al obtener los usuarios',
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+      },
+      HttpStatus.INTERNAL_SERVER_ERROR,
+    );
   }
+}
+
 
  
 }

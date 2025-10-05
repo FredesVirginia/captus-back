@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Orden } from './entity/order.entity';
@@ -28,7 +33,12 @@ export class OrderService {
   ): Promise<OrderWithItems> {
     try {
       const user = await this.userRepo.findOne({ where: { id: userId } });
-      if (!user) throw new NotFoundException('Usuario no encontrado');
+      if (!user) {
+        throw new HttpException(
+          { code: 'USER_NOT_FOUND', status: HttpStatus.NOT_FOUND },
+          HttpStatus.NOT_FOUND,
+        );
+      }
 
       // 2️⃣ Crear la orden padre (sin items aún)
       const order = this.orderRepo.create({
@@ -36,8 +46,6 @@ export class OrderService {
         estado: PagoEnum.PENDIENTE,
         total: 0,
       });
-
-      // Guardamos la orden para que tenga ID
       await this.orderRepo.save(order);
 
       // 3️⃣ Crear los items y calcular el total
@@ -48,13 +56,20 @@ export class OrderService {
         const planta = await this.plantRepo.findOne({
           where: { id: itemDto.plantId },
         });
-        if (!planta)
-          throw new NotFoundException(
-            `Planta con id ${itemDto.plantId} no encontrada`,
+
+        if (!planta) {
+          throw new HttpException(
+            {
+              code: 'PLANT_NOT_FOUND',
+              message: `Planta con id ${itemDto.plantId} no encontrada`,
+              status: HttpStatus.NOT_FOUND,
+            },
+            HttpStatus.NOT_FOUND,
           );
+        }
 
         const orderItem = this.orderItemRepo.create({
-          orden: order, // Vinculamos con la orden ya creada
+          orden: order,
           planta,
           cantidad: itemDto.quantity,
           precioUnitario: planta.precio,
@@ -64,7 +79,6 @@ export class OrderService {
         orderItems.push(orderItem);
       }
 
-      // 4️⃣ Guardar los items
       await this.orderItemRepo.save(orderItems);
 
       // 5️⃣ Actualizar total en la orden
@@ -74,24 +88,36 @@ export class OrderService {
       const fullOrder = await this.orderRepo.findOne({
         where: { id: order.id },
         relations: ['items', 'items.planta'],
-        select: ['id'], // solo seleccionamos el id de la orden
+        select: ['id'],
       });
 
-      // Map para mantener solo id y items
       return {
         id: fullOrder!.id,
         items: fullOrder!.items.map((item) => ({
           id: item.id,
           planta: {
             ...item.planta,
-            precio: item.planta.precio.toString(), // 👈 convertimos number a string
+            precio: item.planta.precio.toString(),
           },
           cantidad: item.cantidad,
-          precioUnitario: item.precioUnitario.toString(), // 👈 convertimos number a string
+          precioUnitario: item.precioUnitario.toString(),
         })),
       };
     } catch (error) {
-      throw new NotFoundException('Error al crear order' , error);
+      console.error('❌ Error en createOrder():', error);
+
+      // Si ya es una HttpException personalizada, se relanza
+      if (error instanceof HttpException) throw error;
+
+      // Si fue un error desconocido, se encapsula
+      throw new HttpException(
+        {
+          code: 'CREATE_ORDER_ERROR',
+          message: 'No se pudo crear la orden. Intenta nuevamente.',
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -99,23 +125,83 @@ export class OrderService {
     try {
       const orderData = await this.orderRepo.findOne({
         where: { id: orderId },
+        relations: ['items', 'items.planta'],
       });
-      if (orderData) return orderData;
-      return 'No se encontro order';
+
+      if (!orderData) {
+        throw new HttpException(
+          {
+            code: 'ORDER_NOT_FOUND',
+            message: 'No se encontró la orden',
+            status: HttpStatus.NOT_FOUND,
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      return { data: orderData, status: 200 };
     } catch (error) {
-      console.log('Error', error);
-      return Error;
+      console.error('❌ Error en getOrderWithItems():', error);
+
+      if (error instanceof HttpException) throw error;
+
+      throw new HttpException(
+        {
+          code: 'GET_ORDER_ERROR',
+          message: 'Error al obtener la orden',
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   async printOrder(orderId: number): Promise<Buffer> {
-    const order = await this.orderRepo.findOne({
-      where: { id: orderId },
-      relations: ['user', 'items', 'items.planta'],
-    });
-    if (!order) throw new NotFoundException('Orden no encontrada');
+    try {
+      const order = await this.orderRepo.findOne({
+        where: { id: orderId },
+        relations: ['user', 'items', 'items.planta'],
+      });
 
-    const docDef = await buildOrderTemplate(order);
-    return this.printService.generatePdf(docDef);
+      if (!order) {
+        throw new HttpException(
+          {
+            code: 'ORDER_NOT_FOUND',
+            message: 'Orden no encontrada',
+            status: HttpStatus.NOT_FOUND,
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      const docDef = await buildOrderTemplate(order);
+
+      try {
+        return await this.printService.generatePdf(docDef);
+      } catch (pdfError) {
+        console.error('❌ Error generando PDF:', pdfError);
+        throw new HttpException(
+          {
+            code: 'PDF_GENERATION_FAILED',
+            message: 'No se pudo generar el PDF',
+            status: HttpStatus.INTERNAL_SERVER_ERROR,
+          },
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    } catch (error) {
+      console.error('❌ Error en printOrder():', error);
+
+      if (error instanceof HttpException) throw error;
+
+      throw new HttpException(
+        {
+          code: 'PRINT_ORDER_ERROR',
+          message: 'Error al imprimir la orden',
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }
