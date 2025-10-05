@@ -77,10 +77,16 @@ export class FloorsService {
 }
 
 
-  async getAllFloors() {
+  async getAllFloors(page = 1, pageSize = 5) {
   try {
-    const allFloor = await this.floorRepository.find({
+    const safePage = Number.isFinite(page) && page > 0 ? page : 1;
+    const safePageSize = Number.isFinite(pageSize) && pageSize > 0 ? pageSize : 5;
+    const skip = (safePage - 1) * safePageSize;
+
+    const [allFloor, total] = await this.floorRepository.findAndCount({
       relations: ['oferta'],
+      skip,
+      take: safePageSize,
     });
 
     // Si no hay resultados, devolvemos un array vacío
@@ -113,7 +119,16 @@ export class FloorsService {
       return { ...floor };
     });
 
-    return floorsWithPrice;
+    const totalPages = Math.ceil(total / safePageSize) || 1;
+    return {
+      data: floorsWithPrice,
+      page: safePage,
+      pageSize: safePageSize,
+      total,
+      totalPages,
+      hasNext: safePage < totalPages,
+      hasPrev: safePage > 1,
+    };
   } catch (error) {
     console.error('🚨 Error in getAllFloors():', error);
 

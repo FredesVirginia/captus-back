@@ -6,6 +6,8 @@ import {
   UploadedFile,
   UseGuards,
   UseInterceptors,
+
+  Query,
 } from '@nestjs/common';
 import { FloorsService } from './floors.service';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -47,8 +49,9 @@ export class FloorsController {
   }
 
   @Get()
-  async getFloors() {
-    return await this.floorsService.getAllFloors();
+  async getFloors(@Query('page') page?: string) {
+    const pageNum = page ? parseInt(page, 10) : 1;
+    return await this.floorsService.getAllFloors(pageNum, 5);
   }
 
   @Get('/ofertas')
