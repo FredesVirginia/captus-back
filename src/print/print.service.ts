@@ -1,7 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import PdfPrinter from 'pdfmake';
 import { TDocumentDefinitions } from 'pdfmake/interfaces';
-import * as fs from 'fs';
 @Injectable()
 export class PrintService {
   private printer: PdfPrinter;

@@ -72,45 +72,85 @@ export class UserService {
         where: { id: saved.id },
         relations: ['floor'],
       });
-    } catch (error) {}
-  }
+    } catch (error) {
+      console.error('🚨 Error in addFavorito():', error);
 
-  async  removeFavorito ( dto : CreateFavoritoDto){
-    const { userId, floorId } = dto;
+      if (error instanceof HttpException) throw error;
 
-    const favorito = await this.favoritoRepo.findOne({
-      where : { user : { id : userId }, floor : { id : floorId } }
-    })
-    if (!favorito) {
       throw new HttpException(
         {
-          code: 'FAVORITO_NOT_FOUND',
-          message: 'El favorito no existe',
-          status: HttpStatus.NOT_FOUND,
+          code: 'ADD_FAVORITO_ERROR',
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
         },
-        HttpStatus.NOT_FOUND,
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
-    return this.favoritoRepo.remove(favorito);
   }
 
-   async getFavorites(userId: number): Promise<Favorito[]> {
-    const user = await this.userRepository.findOne({ where: { id: userId } });
-    if (!user) {
+  async removeFavorito(dto: CreateFavoritoDto) {
+    try {
+      const { userId, floorId } = dto;
+
+      const favorito = await this.favoritoRepo.findOne({
+        where: { user: { id: userId }, floor: { id: floorId } },
+      });
+      if (!favorito) {
+        throw new HttpException(
+          {
+            code: 'FAVORITO_NOT_FOUND',
+            message: 'El favorito no existe',
+            status: HttpStatus.NOT_FOUND,
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+      return this.favoritoRepo.remove(favorito);
+    } catch (error) {
+      console.error('🚨 Error in removeFavorito():', error);
+
+      if (error instanceof HttpException) throw error;
+
       throw new HttpException(
         {
-          code: 'USER_NOT_FOUND',
-          message: 'El usuario no existe',
-          status: HttpStatus.NOT_FOUND,
+          code: 'REMOVE_FAVORITO_ERROR',
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
         },
-        HttpStatus.NOT_FOUND,
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
 
-    return this.favoritoRepo.find({
-      where: { user: { id: userId } },
-      relations: ['floor'],
-      order: { fechaAgregado: 'DESC' },
-    });
+  async getFavorites(userId: number): Promise<Favorito[]> {
+    try {
+      const user = await this.userRepository.findOne({ where: { id: userId } });
+      if (!user) {
+        throw new HttpException(
+          {
+            code: 'USER_NOT_FOUND',
+            message: 'El usuario no existe',
+            status: HttpStatus.NOT_FOUND,
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      return this.favoritoRepo.find({
+        where: { user: { id: userId } },
+        relations: ['floor'],
+        order: { fechaAgregado: 'DESC' },
+      });
+    } catch (error) {
+      console.error('🚨 Error in getAllFavorito():', error);
+
+      if (error instanceof HttpException) throw error;
+
+      throw new HttpException(
+        {
+          code: 'GET_FAVORITO_ERROR',
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }
