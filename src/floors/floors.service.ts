@@ -212,9 +212,7 @@ export class FloorsService {
       return { data: [] };
     }
 
-  
-
-   
+    return { data: combos };
   } catch (error) {
     console.error('🚨 Error in getAllCombos():', error);
 
